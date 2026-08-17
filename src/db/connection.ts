@@ -10,7 +10,7 @@ const createPool = () => {
     })
 }
 
-let client 
+let client
 
 if (isProd()) {
     client = createPool()

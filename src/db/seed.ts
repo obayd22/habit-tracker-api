@@ -21,9 +21,8 @@ const seed = async () => {
 
         console.log('Creating demo users...');
         const [demoUser] = await db.insert(users).values({
-            email: 'demo@app.com', 
-            password: 'passwprd', 
-            firstName: 'demo', 
+            email: 'demo@app.com',
+            password: 'passwprd',
             username: 'demo'
         })
         .returning()

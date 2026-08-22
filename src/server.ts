@@ -23,7 +23,7 @@ app.get('/health', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
-app.use('/api/habit', habitRoutes)
+app.use('/api/habits', habitRoutes)
 
 export {app};
 

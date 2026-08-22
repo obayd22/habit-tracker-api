@@ -1,8 +1,19 @@
 import type { Request, Response, NextFunction } from "express";
-import { type ZodSchema,ZodError } from "zod/v3";
 
-export const validateBody = (schema: ZodSchema) => {
+import { ZodError, type ZodTypeAny } from "zod";
+
+export const validateBody = (schema: ZodTypeAny) => {
     return (req: Request, res: Response, next: NextFunction) => {
+        if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+            return res.status(400).json({
+                error: 'Validation Failed',
+                details: [{
+                    field: 'body',
+                    message: 'Request body is required and must be a JSON object.'
+                }]
+            });
+        }
+
         try{ 
             const validateData = schema.parse(req.body);
             req.body = validateData;
@@ -22,7 +33,7 @@ export const validateBody = (schema: ZodSchema) => {
     }
 }
 
-export const validateParams = (schema: ZodSchema) => {
+export const validateParams = (schema: ZodTypeAny) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try{ 
             schema.parse(req.params);
@@ -42,7 +53,7 @@ export const validateParams = (schema: ZodSchema) => {
     }
 }
 
-export const validateQuery = (schema: ZodSchema) => {
+export const validateQuery = (schema: ZodTypeAny) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try{ 
             schema.parse(req.query);

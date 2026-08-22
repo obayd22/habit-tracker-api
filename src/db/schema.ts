@@ -1,23 +1,23 @@
 import {
-  pgTable, 
+  pgTable,
   uuid,
   varchar,
   text,
   timestamp,
   boolean,
   integer,
-} from 'drizzle-orm/pg-core'; 
+} from 'drizzle-orm/pg-core';
 
 import { relations } from 'drizzle-orm';
-
-import {createInsertSchema, createSelectSchema} from 'drizzle-zod'
+import { z } from 'zod';
 
 export const users = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   email: varchar('email', {length: 255}).notNull().unique(),
   username: varchar('username', {length: 50}).notNull().unique(),
-  password: varchar('password', {length: 255}).notNull(), 
-  firstName: varchar('first_name', {length: 50}).notNull(),
+  password: varchar('password', {length: 255}).notNull(),
+  firstName: varchar('first_name', { length: 50 }),
+  lastName: varchar('last_name', { length: 50 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 })
@@ -101,12 +101,25 @@ export const habitTagsRelations = relations(habitTags, ({ one }) => ({
 }))
 
 export type User = typeof users.$inferSelect;
+export type newUser = typeof users.$inferInsert;
 export type Habit = typeof habits.$inferSelect; 
-export type Entries = typeof entries.$inferSelect; 
-export type Tag = typeof tags.$inferSelect; 
+export type Entry = typeof entries.$inferSelect; 
+export type Tag = typeof tags.$inferSelect;
 export type HabitTag = typeof habitTags.$inferSelect; 
 
 
 
-export const insertUserSchema = createInsertSchema(users)
-export const selectUserSchema = createSelectSchema(users)
+export const insertUserSchema = z.object({
+  email: z.string().email(),
+  username: z.string().min(3).max(50),
+  password: z.string().min(8).max(255),
+});
+
+export const selectUserSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  username: z.string().min(3).max(50),
+  password: z.string().min(8).max(255),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+});

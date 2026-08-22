@@ -1,8 +1,11 @@
 import { Router } from "express";
 import {validateBody} from '../middleware/validation.ts';
 import {z} from 'zod';
+import { authenticateToken } from "../middleware/auth.ts";
 
 const router = Router();
+
+router.use(authenticateToken)
 
 router.get('/', (req, res) => {
     res.json({messgage: "Habits"}).status(200)
